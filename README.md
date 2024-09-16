@@ -10,4 +10,4 @@ dotnet run
 cd ./Frontend
 dotnet run
 ```
-Após isso, abra seu navegador em: <a target="blank_" href="http://localhost:5088/">http://localhost:5088/</a>
+Após isso, abra seu navegador em: <a target="blank_" href="http://localhost:5088/">http://localhost:5105/</a>
