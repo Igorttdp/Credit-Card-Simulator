@@ -1,0 +1,17 @@
+.loader[b-gqd168444m] {
+  border: 6px solid transparent;
+  border-top: 6px solid #3730a3;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  animation: spin-b-gqd168444m 0.6s linear infinite;
+}
+
+@keyframes spin-b-gqd168444m {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

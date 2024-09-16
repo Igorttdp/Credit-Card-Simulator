@@ -1,0 +1,155 @@
+﻿@using System.Drawing;
+@using System.Text.RegularExpressions;
+
+@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>Umbler Teste Técnico</PageTitle>
+
+<div class="h-full grid grid-cols-[1fr,_max-content] overflow-hidden">
+    <TabsRoot SelectedTabId="create" class="mt-10">
+        <TabsTrigger Triggers="Triggers" />
+
+        <TabsContent Id="create">
+            <div class="mt-10 animate-appear max-w-[500px]">
+                <div class=" pr-2 max-w-[500px]">
+                    <h2 class="text-2xl font-bold">Resumo do Pedido</h2>
+                    <Separator ClassNames="my-2" />
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between">
+                        <span class="font-bold text-gray-600">Produto:</span>
+                        <span class="font-medium">Celular Samsumg M35</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="flex gap-2">
+                            <span class="font-bold text-gray-600">Forma de Pagamento:</span>
+                            <img src="visa.png" class="w-10" alt="">
+                            <img src="mastercard.png" class="w-10" alt="">
+                        </div>
+                        <span class="font-medium">Parcelas - 1x à vista</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-bold text-gray-600">Valor Total:</span>
+                        <span class="font-medium">R$ 1600,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <CreatePayment SetPaymentId="SetPaymentId" CardName="@CardName" SetCardName="SetCardName"
+                InputCardNumber="@InputCardNumber" SetCardNumber="SetCardNumber" CardExpiration="@CardExpiration"
+                SetCardExpiration="SetCardExpiration" CardCVV="@CardCVV" SetCardCVV="SetCardCVV"
+                SetCardFlip="SetCardFlip" />
+        </TabsContent>
+
+        <TabsContent Id="capture">
+            <CapturePayment PaymentId="@PaymentId" />
+        </TabsContent>
+
+        <TabsContent Id="cancel">
+            <CancelPayment PaymentId="@PaymentId" />
+        </TabsContent>
+    </TabsRoot>
+
+    <div class="flex items-center 2xl:mx-12">
+        <Card CardName="@CardName" CardNumber="@CardNumber" CardExpiration="@CardExpiration" CardCVV="@CardCVV"
+            IsCardFlipActive="IsCardFlipActive" />
+    </div>
+</div>
+
+@code {
+    private string PaymentId { get; set; } = "";
+
+
+    private void SetPaymentId(string newValue)
+    {
+        PaymentId = newValue;
+        StateHasChanged();
+    }
+    private List<TabsTrigger.TabsTriggerProps> Triggers { get; set; } =
+    new List<TabsTrigger.TabsTriggerProps>
+        {
+new TabsTrigger.TabsTriggerProps("Criar Cobrança", "create"),
+new TabsTrigger.TabsTriggerProps("Capturar Cobrança", "capture"),
+new TabsTrigger.TabsTriggerProps("Cancelar Cobrança", "cancel")
+        };
+
+    private string CardName = "";
+
+    private void SetCardName(string newValue)
+    {
+        CardName = newValue;
+        StateHasChanged();
+    }
+
+    private string CardNumber = "";
+    private string InputCardNumber = "";
+
+    private void SetCardNumber(string newValue)
+    {
+        string ast = "**** **** **** ****";
+
+        var formattedValue = string.Empty;
+
+        foreach (var digit in newValue)
+        {
+            if (char.IsDigit(digit))
+            {
+                if (formattedValue.Length > 0 && (formattedValue.Length + 1) % 5 == 0)
+                {
+                    formattedValue += " ";
+                }
+
+                formattedValue += digit;
+            }
+        }
+
+        InputCardNumber = formattedValue;
+
+        CardNumber = formattedValue + ast.Substring(formattedValue.Length);
+
+        StateHasChanged();
+    }
+
+    private string CardExpiration = "";
+
+    private void SetCardExpiration(string newValue)
+    {
+        Regex regex = new Regex(@"^\d+$");
+
+        var formattedValue = string.Empty;
+
+        foreach (char c in newValue)
+        {
+            if (char.IsDigit(c))
+            {
+                formattedValue += c;
+
+                if (formattedValue.Length == 2)
+                {
+                    formattedValue += "/";
+                }
+            }
+        }
+
+        CardExpiration = formattedValue;
+
+        StateHasChanged();
+    }
+
+    private string CardCVV = "";
+
+    private void SetCardCVV(string newValue)
+    {
+        CardCVV = newValue;
+        StateHasChanged();
+    }
+    private bool IsCardFlipActive = false;
+
+    private void SetCardFlip()
+    {
+        IsCardFlipActive = !IsCardFlipActive;
+        StateHasChanged();
+    }
+}

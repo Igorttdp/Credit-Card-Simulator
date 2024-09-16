@@ -1,0 +1,25 @@
+<div class="flex flex-col @ClassNames" @attributes="DivAttributes">
+    <CascadingValue Value="SelectedTabId" IsFixed>
+        <CascadingValue Value="SetSelectedTab" IsFixed>
+            @ChildContent
+        </CascadingValue>
+    </CascadingValue>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string SelectedTabId { get; set; } = "";
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? DivAttributes { get; set; }
+    [Parameter]
+    public string ClassNames { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    public void SetSelectedTab(string tabId)
+    {
+        SelectedTabId = tabId;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,61 @@
+<div class="flip-card @(IsCardFlipActive ? "flip-active" : "") @ClassNames">
+    <div class="flip-card-inner">
+        <div class="flip-card-front relative">
+            <div class="p-4 text-white">
+                <img src="https://assets.umbler.com/site/about/umbler-logo-bg-primary.svg" alt="logo" width="100px">
+
+                <div class="mt-4 flex items-center">
+                    <img src="CardChip.png" alt="" width="70">
+                    <img src="wifiIcon.svg" alt="">
+                </div>
+
+                <span style="text-shadow: 1px 1px 2px black;" class="absolute italic top-5 right-6 font-medium">Conta
+                    corrente</span>
+
+                <span style="text-shadow: 1px 1px 2px black; font-family: 'Courier Prime', monospace;"
+                    class="absolute bottom-20 left-6 text-3xl font-bold">@CardNumber</span>
+
+                <span style="text-shadow: 1px 1px 2px black;"
+                    class="font-semibold absolute bottom-6 left-6 text-lg truncate max-w-[285px]">@CardName</span>
+
+                <img src="@(CardNumber.StartsWith('4') ? "visa.png" : CardNumber.StartsWith('5') ? "mastercard.png" : "")"
+                    class="@(CardNumber.StartsWith('4') || CardNumber.StartsWith('5') ? "animate-appear" : "") w-20 absolute right-3 bottom-3"
+                    alt="" />
+
+            </div>
+        </div>
+        <div class="flip-card-back absolute">
+            <div class="w-full h-8 bg-slate-400 mt-12" />
+            <div
+                class="bg-indigo-500/25 h-10 w-[70%] m-auto my-2 px-5 backdrop-blur-2xl flex items-center justify-between">
+                <span><strong>Vencimento:</strong> @CardExpiration</span>
+                <span><strong>CVV:</strong> @CardCVV</span>
+            </div>
+            <p class="opacity text-xs w-[90%] m-auto">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vel
+                magnam nostrum ad
+                culpa asperiores
+                assumenda magni, molestiae nisi? Voluptatem modi et quam facere quis sed deserunt nulla, molestiae a
+                eligendi?</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? ClassNames { get; set; }
+
+    [Parameter]
+    public string? CardName { get; set; }
+
+    [Parameter]
+    public string CardNumber { get; set; } = "";
+
+    [Parameter]
+    public string CardExpiration { get; set; } = "";
+
+    [Parameter]
+    public string CardCVV { get; set; } = "";
+
+    [Parameter]
+    public bool IsCardFlipActive { get; set; } = false;
+}

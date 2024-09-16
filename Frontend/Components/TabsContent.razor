@@ -1,0 +1,15 @@
+<div class="@(Id != SelectedTabId ? "hidden": "")">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Id { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [CascadingParameter]
+    public string SelectedTabId { get; set; } = "";
+
+}

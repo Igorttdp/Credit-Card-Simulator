@@ -1,0 +1,42 @@
+<div class="flex gap-4 bg-gray-200 w-fit px-4 py-2 rounded">
+    @if (Triggers.Count != 0)
+    {
+        @foreach (TabsTriggerProps item in Triggers)
+        {
+            <button onclick="@(() => setActiveTab(item.Id))"
+                class="px-2 py-1 font-medium rounded-md transition-colors @(item.ActiveTab == true || SelectedTabId.Equals(item.Id) ? "bg-blue-900 text-white" : "text-gray-700")">@item.TabName</button>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<TabsTriggerProps> Triggers { get; set; } = new List<TabsTriggerProps>();
+
+    [CascadingParameter]
+    public string SelectedTabId { get; set; } = "";
+    [CascadingParameter]
+    public Action<string>? SetSelectedTab { get; set; }
+
+    public void setActiveTab(string tabId)
+    {
+        this.Triggers.ForEach(item => item.ActiveTab = item.Id == tabId);
+
+        SetSelectedTab?.Invoke(tabId);
+
+        StateHasChanged();
+    }
+
+    public class TabsTriggerProps
+    {
+        public TabsTriggerProps(string TabName, string id)
+        {
+            this.Id = id;
+            this.TabName = TabName;
+        }
+
+        public string Id { get; set; } = "";
+        public bool ActiveTab { get; set; } = false;
+        public string TabName { get; set; } = "";
+    }
+}

@@ -1,0 +1,9 @@
+<div @attributes="Attributes" class="w-full h-[1px] border @ClassNames" />
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+    [Parameter]
+    public string? ClassNames { get; set; }
+}

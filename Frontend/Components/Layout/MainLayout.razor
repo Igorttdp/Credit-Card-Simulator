@@ -1,0 +1,20 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page h-screen">
+    <main class="h-full">
+        <div class="top-row px-4 !h-16 !justify-between !items-center">
+            <img src="https://assets.umbler.com/site/about/umbler-logo-bg-primary.svg" alt="Umbler logo"
+                class="w-[108px] h-[35px] invert">
+            
+            <a href="javascript:;" class="w-12 h-12 rounded-full hover:shadow-[0_0_0_6px_rgba(59,89,178,.1)]"
+                style="transition: opacity .3s,box-shadow .2s,-webkit-box-shadow .2s;">
+                <img src="//design.umbler.com//assets/img/docs/avatar.jpg" alt="Bella" class="rounded-full" />
+            </a>
+        </div>
+
+        <article class="content p-4 h-[calc(100%_-_64px)] max-w-[1400px] m-[0_auto]">
+            @Body
+        </article>
+    </main>
+</div>
+

@@ -1,0 +1,23 @@
+<input @attributes="InputAttributes" type="text" @oninput="HandleInputChange"
+    class="border-2 border-[#dfe5f2] focus:border-[#557cf2] transition-colors duration-300 outline-0 rounded-[7.5px] h-12 text-sm px-4 py-3 w-full @ClassNames" />
+
+@code {
+    [Parameter]
+    public EventCallback<ChangeEventArgs> OnValueChanged { get; set; }
+
+    [Parameter]
+    public string ClassNames { get; set; } = "";
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? InputAttributes { get; set; }
+
+    private void HandleInputChange(ChangeEventArgs e)
+    {
+        if (e.Value == null)
+        {
+            return;
+        }
+
+        OnValueChanged.InvokeAsync(e);
+    }
+}

@@ -1,0 +1,104 @@
+<div class="mt-10 animate-appear max-w-[500px]">
+    <h2 class="text-2xl font-bold">Cancelar Cobrança</h2>
+    <p>Mudou de ideia ? Sem problemas.</p>
+    <Separator />
+    <div class="mt-10">
+        <div class="flex gap-4 items-center">
+            <img src="https://assets.umbler.com/site/about/icon-umblerito-gente-boa.svg?v=20240904113349" alt="">
+            <div>
+                <h3 class="font-bold text-xl">Cancele</h3>
+                <p class="text-justify">o pagamento quando desejar com apenas um clique!</p>
+                <button disabled="@(PaymentId != "" ? false : true)" @onclick="OnCancelPayment"
+                    class="bg-red-700 rounded w-full py-2 text-white hover:bg-red-600 transition-colors mt-4">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class=" mt-10">
+        <div>
+            <h2 class="text-2xl font-bold">Resumo do Cancelamento</h2>
+            <Separator />
+        </div>
+
+        <div class="flex flex-col gap-2 mt-4">
+            <div class="flex justify-between">
+                <span class="font-bold text-gray-600">Produto:</span>
+                <span class="font-medium">Celular Samsumg M35</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-bold text-gray-600">Forma de Pagamento:</span>
+                <span class="font-medium">Parcelas - 1x à vista</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-bold text-gray-600">Valor Total:</span>
+                <span class="font-medium">R$ 1600,00</span>
+            </div>
+        </div>
+    </div>
+
+    @if (FormSubmitted && !IsLoading)
+    {
+        if (HasError)
+        {
+            <div class="max-w-[400px] mt-12 px-6 py-6 shadow border rounded-md absolute right-10 top-10">
+                <h6 class="text-xl font-medium text-red-700">Erro</h6>
+                <p class="text-justify font-medium">Algo deu errado. Tente novamente.</p>
+                <button class="absolute right-4 top-4" @onclick="CloseToaster"><img src="x.png" alt=""></button>
+            </div>
+        }
+        else
+        {
+            <div class="max-w-[400px] mt-12 px-6 py-6 shadow border rounded-md absolute right-10 top-10">
+                <h6 class="text-xl font-medium text-green-700">Sucesso!</h6>
+                <p class="text-justify font-medium">O pagamento foi cancelado com sucesso!</p>
+                <button class="absolute right-4 top-4" @onclick="CloseToaster"><img src="x.png" alt=""></button>
+            </div>
+        }
+    }
+</div>
+
+<div class="absolute w-screen h-screen top-0 left-0 bg-black/20 flex flex-col gap-6 items-center justify-center z-30"
+    style="display: @(IsLoading ? "flex" : "none");">
+    <Loader />
+    <span class="font-bold text-indigo-800">Enviando</span>
+</div>
+
+@code {
+    [Parameter]
+    public string PaymentId { get; set; } = "";
+
+    public HttpClient Client = new();
+
+
+    public bool IsLoading { get; set; } = false;
+
+    public bool FormSubmitted { get; set; } = false;
+    public bool HasError { get; set; } = false;
+
+    public void CloseToaster()
+    {
+        FormSubmitted = false;
+    }
+
+    public async Task OnCancelPayment()
+    {
+        FormSubmitted = true;
+        IsLoading = true;
+
+        var response = await
+        Client.PutAsync(@$"http://localhost:5134/cancelPayment?PaymentId={PaymentId}", null);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        IsLoading = false;
+
+        if (!response.IsSuccessStatusCode)
+        {
+            HasError = true;
+        }
+        else
+        {
+            HasError = false;
+        }
+
+    }
+}

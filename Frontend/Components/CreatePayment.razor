@@ -1,0 +1,198 @@
+@using Frontend.Models.Request;
+@using Frontend.Models.Response;
+@using System.Text;
+@using System.Text.Json;
+
+<div class="mt-12 animate-appear" @attributes="Attributes">
+    <div class=" pr-2 max-w-[500px]">
+        <h2 class="text-2xl font-bold">Informações no Cartão</h2>
+        <Separator ClassNames="my-2" />
+    </div>
+
+    <EditForm Model="@PaymentBody" OnValidSubmit="OnSubmit" class="pl-3 flex flex-col gap-6 max-w-[400px]">
+        <div class="flex flex-col gap-2">
+            <label for="costumer" class="cursor-pointer">Nome do Cartão</label>
+            <Input id="costumer" name="Holder" placeholder="Digite aqui" value="@CardName"
+                OnValueChanged="@((e) => OnDataChange(e, "Holder", SetCardName))" />
+        </div>
+        <div class=" flex flex-col gap-2">
+            <label for="cardNumber" class="cursor-pointer">Número do Cartão</label>
+            <Input id="cardNumber" name="CardNumber" placeholder="**** **** **** ****" maxlength="19"
+                value="@InputCardNumber" OnValueChanged="@((e) => OnDataChange(e, "CardNumber", SetCardNumber))" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+                <label for="cardExpiration" class="cursor-pointer">Vencimento</label>
+                <Input id="cardExpiration" name="cardExpiration" placeholder="00/0000" maxlength="7"
+                    OnValueChanged="@((e) => OnDataChange(e, "ExpirationDate", SetCardExpiration))"
+                    value="@CardExpiration" @onfocusin="() => SetCardFlip.InvokeAsync()"
+                    @onfocusout="() => SetCardFlip.InvokeAsync()" />
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="cardCvv" class="cursor-pointer">CVV</label>
+                <Input id="cardCvv" name="cardCvv" placeholder="***" maxlength="3"
+                    OnValueChanged="@((e) => OnDataChange(e, "SecurityCode", SetCardCVV))" value="@CardCVV"
+                    @onfocusin="() => SetCardFlip.InvokeAsync()" @onfocusout="() => SetCardFlip.InvokeAsync()" />
+            </div>
+        </div>
+
+        <button type="submit"
+            class="px-3 py-2 bg-gradient-to-r from-indigo-900 from-20% via-violet-800 via-50% to-purple-800 rounded text-white font-medium hover:scale-[98%] transition-transform">
+            Pagar
+        </button>
+    </EditForm>
+
+    @if (FormSubmitted && !IsLoading)
+    {
+        if (HasError)
+        {
+            <div class="max-w-[400px] mt-12 px-6 py-6 shadow border rounded-md absolute right-10 top-10">
+                <h6 class="text-xl font-medium text-red-700">Erro</h6>
+                <p class="text-justify font-medium">Algo deu errado. Verifique as informações do cartão e tente
+                    novamente.</p>
+                <button class="absolute right-4 top-4" @onclick="CloseToaster"><img src="x.png" alt=""></button>
+            </div>
+        }
+        else
+        {
+            <div class="max-w-[400px] mt-12 px-6 py-6 shadow border rounded-md absolute right-10 top-10">
+                <h6 class="text-xl font-medium text-green-700">Sucesso!</h6>
+                <p class="text-justify font-medium">O pagamento foi autorizado com sucesso!</p>
+                <button class="absolute right-4 top-4" @onclick="CloseToaster"><img src="x.png" alt=""></button>
+            </div>
+        }
+    }
+</div>
+
+
+<div class="absolute w-screen h-screen top-0 left-0 bg-black/20 flex flex-col gap-6 items-center justify-center z-30"
+    style="display: @(IsLoading ? "flex" : "none");">
+    <Loader />
+    <span class="font-bold text-indigo-800">Enviando</span>
+</div>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? Attributes { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SetPaymentId { get; set; }
+
+    [Parameter]
+    public string CardName { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> SetCardName { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SetCardNumber { get; set; }
+
+    [Parameter]
+    public string InputCardNumber { get; set; } = "";
+    [Parameter]
+    public string CardExpiration { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> SetCardExpiration { get; set; }
+
+    [Parameter]
+    public string CardCVV { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> SetCardCVV { get; set; }
+
+    [Parameter]
+    public EventCallback SetCardFlip { get; set; }
+
+    HttpClient Client = new();
+
+    CreatePaymentRequest PaymentBody = new();
+
+    public bool IsLoading { get; set; } = false;
+
+    public bool FormSubmitted { get; set; } = false;
+    public bool HasError { get; set; } = false;
+
+    public void CloseToaster()
+    {
+        FormSubmitted = false;
+    }
+
+    public void OnDataChange(ChangeEventArgs e, string fieldName, EventCallback<string> callback)
+    {
+        if (e.Value == null) return;
+
+        string Value = (string)e.Value;
+        Value = Value.Replace(" ", "");
+
+        var propertyInfo = PaymentBody.GetType().GetProperty(fieldName);
+
+        if (propertyInfo != null)
+        {
+            propertyInfo.SetValue(PaymentBody, Value);
+
+            if (fieldName.Equals("CardNumber"))
+            {
+                PaymentBody.Brand = Value.StartsWith('4') ? "Visa" : Value.StartsWith('5') ? "Master" : "";
+            }
+        }
+
+        callback.InvokeAsync((string)e.Value);
+    }
+
+    public async Task OnSubmit()
+    {
+        FormSubmitted = true;
+        IsLoading = true;
+
+        if (!IsValid())
+        {
+            IsLoading = false;
+            HasError = true;
+            return;
+        }
+
+        var jsonContent = JsonSerializer.Serialize(PaymentBody);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        var response = await Client.PostAsync("http://localhost:5134/createPayment", content);
+        var responseContent = await response.Content.ReadAsStringAsync();
+
+        IsLoading = false;
+
+        if (!response.IsSuccessStatusCode)
+        {
+            HasError = true;
+        }
+        else
+        {
+            var Json = JsonSerializer.Deserialize<CreatePaymentResponse>(responseContent);
+
+            if (Json.Payment.Status != 1)
+            {
+                HasError = true;
+                return;
+            }
+
+            HasError = false;
+            await SetPaymentId.InvokeAsync(Json.Payment.PaymentId);
+
+
+            @* await SetCardName.InvokeAsync("");
+await SetCardNumber.InvokeAsync("");
+await SetCardExpiration.InvokeAsync("");
+await SetCardCVV.InvokeAsync(""); *@
+        }
+    }
+
+    public bool IsValid()
+    {
+        if (InputCardNumber.StartsWith('4') || InputCardNumber.StartsWith('5'))
+        {
+            return true;
+        }
+
+        return false;
+    }
+}

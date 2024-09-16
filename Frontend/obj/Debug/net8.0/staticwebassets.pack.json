@@ -1,0 +1,61 @@
+{
+  "Files": [
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/obj/Debug/net8.0/scopedcss/projectbundle/Frontend.bundle.scp.css",
+      "PackagePath": "staticwebassets/Frontend.bundle.scp.css"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/CardChip.png",
+      "PackagePath": "staticwebassets/CardChip.png"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/app.css",
+      "PackagePath": "staticwebassets/app.css"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/catch.png",
+      "PackagePath": "staticwebassets/catch.png"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/favicon.png",
+      "PackagePath": "staticwebassets/favicon.png"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/mastercard.png",
+      "PackagePath": "staticwebassets/mastercard.png"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/night-sky.jpg",
+      "PackagePath": "staticwebassets/night-sky.jpg"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/visa.png",
+      "PackagePath": "staticwebassets/visa.png"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/wifiIcon.svg",
+      "PackagePath": "staticwebassets/wifiIcon.svg"
+    },
+    {
+      "Id": "/home/igor/Área de Trabalho/pgrm/umbler/Frontend/wwwroot/x.png",
+      "PackagePath": "staticwebassets/x.png"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.Frontend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.Frontend.props",
+      "PackagePath": "build\\Frontend.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Frontend.props",
+      "PackagePath": "buildMultiTargeting\\Frontend.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Frontend.props",
+      "PackagePath": "buildTransitive\\Frontend.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
